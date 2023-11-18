@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("partials/flowbite") %>
+        <title>RadDig - Crear</title>
+</head>
+
+<body>
+    <%- include("partials/navegation") %>
+
+        <section class="bg-white dark:bg-gray-900">
+            <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16 dark:border-gray-600">
+                <div class="pb-4 mb-4 border-b sm:mb-5 dark:border-gray-600">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Actualizar un Paciente
+                    </h2>
+                </div>
+                <% if (user) { %>
+                    <form action="/editar" method="POST">
+                        <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 mb-6">
+                            <div class="sm:col-span-2">
+                                <input id="id" name="id" value="<%= user.id %>" hidden>
+                                <label for="nombre_apellido"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre Y Apellido</label>
+                                <input type="text" name="nombre_apellido" id="nombre_apellido"
+                                    value="<%= user.nombre_apellido %>"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="ej: José Lopez" required="">
+                            </div>
+                            <div>
+                                <label for="nacimiento"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha De
+                                    Nacimiento</label>
+                                <input type="date" name="nacimiento" id="nacimiento" value="<%= user.nacimiento %>"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="" required="">
+                            </div>
+                            <div class="w-full">
+                                <label for="cedula"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cédula</label>
+                                <input type="number" name="cedula" id="cedula" value="<%= user.cedula %>"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="ej: 10200300" required="">
+                            </div>
+                            <div>
+                                <label for="tipo"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo
+                                    De Radiografía</label>
+                                <select id="tipo" name="tipo"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    <option <%=user.tipo=="abdominal" ? "selected" :"" %> value="abdominal">Abdominal
+                                    </option>
+                                    <option <%=user.tipo=="articulaciones" ? "selected" :"" %>
+                                        value="articulaciones">Articulaciones</option>
+                                    <option <%=user.tipo=="dientes" ? "selected" :"" %> value="dientes">Dientes</option>
+                                    <option <%=user.tipo=="extremidades" ? "selected" :"" %>
+                                        value="extremidades">Extremidades</option>
+                                    <option <%=user.tipo=="torax" ? "selected" :"" %> value="torax">Torax</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="expedicion"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha De
+                                    Expedición</label>
+                                <input type="date" name="expedicion" id="expedicion" value="<%= user.expedicion %>"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="" required="">
+                            </div>
+
+                        </div>
+
+                        <button type="submit"
+                            class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center rounded-lg text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800">
+                            Actualizar Paciente
+                        </button>
+                        <a href="/mostrar" type="button"
+                            class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center rounded-lg text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800">Cancelar</a>
+                    </form>
+                    <% } %>
+            </div>
+        </section>
+
+        <%- include("partials/footer") %>
+
+</body>
+
+</html>
