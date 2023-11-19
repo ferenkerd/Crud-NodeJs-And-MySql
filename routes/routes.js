@@ -36,95 +36,88 @@ const router = Router()
 router.get("/", (req, res) => res.render("index"))
 
 router.get("/mostrar", async (req, res) => {
-    await connection.query("SELECT * FROM radiografias", (error, results) => {
-        if (error) {
-            console.error("No se ha realizado la query " + error)
-            return
-        }
+    try {
+        const [results] = await connection.query("SELECT * FROM radiografias")
         res.render("read", { results: results })
-
-    })
+    } catch (error) {
+        console.error("No se ha realizado la query " + error)
+    }
 })
+
 
 router.get("/crear", (req, res) => res.render("create"))
 
 router.get("/actualizar/:id", async (req, res) => {
-    const id = req.params.id
-    await connection.query("SELECT * FROM radiografias WHERE id=?", [id], (error, results) => {
-        if (error) {
-            console.error("No se ha realizado la query " + error)
-            return
-        }
+    try {
+        const id = req.params.id
+        const [results] = await connection.query("SELECT * FROM radiografias WHERE id=?", [id])
         res.render("update", { user: results[0] })
-    })
+    } catch (error) {
+        console.error("No se ha realizado la query " + error)
+    }
 })
 
 router.post("/guardar", uploadImage, async (req, res) => {
-    const file = req.file.filename
-    const nombreApellido = req.body.nombre_apellido
-    const nacimiento = req.body.nacimiento
-    const cedula = req.body.cedula
-    const tipo = req.body.tipo
-    const expedicion = req.body.expedicion
-    await connection.query("INSERT INTO radiografias set ?", {
-        nombre_apellido: nombreApellido,
-        nacimiento: nacimiento,
-        cedula: cedula,
-        tipo: tipo,
-        expedicion: expedicion,
-        ruta: file
-    }, (error, results) => {
-        if (error) {
-            console.error("No se ha realizado la query " + error)
-        } else {
-            res.redirect("/mostrar")
-        }
-    })
+    try {
+        const file = req.file.filename
+        const nombreApellido = req.body.nombre_apellido
+        const nacimiento = req.body.nacimiento
+        const cedula = req.body.cedula
+        const tipo = req.body.tipo
+        const expedicion = req.body.expedicion
+        await connection.query("INSERT INTO radiografias set ?", {
+                                                                nombre_apellido: nombreApellido,
+                                                                nacimiento: nacimiento,
+                                                                cedula: cedula,
+                                                                tipo: tipo,
+                                                                expedicion: expedicion,
+                                                                ruta: file
+                                                                }
+        )
+        res.redirect("/mostrar")                
+    } catch (error) {
+        console.error("No se ha realizado la query " + error)
+    }
 })
 
 router.post("/editar", async (req, res) => {
-    const id = req.body.id
-    const nombreApellido = req.body.nombre_apellido
-    const nacimiento = req.body.nacimiento
-    const cedula = req.body.cedula
-    const tipo = req.body.tipo
-    const expedicion = req.body.expedicion
-    await connection.query("UPDATE radiografias SET ? WHERE id = ?", [{
-        nombre_apellido: nombreApellido,
-        nacimiento: nacimiento,
-        cedula: cedula,
-        tipo: tipo,
-        expedicion: expedicion
-    }, id], (error, results) => {
-        if (error) {
-            console.error("No se ha realizado la query " + error)
-        } else {
-            res.redirect("/mostrar")
-        }
-
-    })
+    try {
+        const id = req.body.id
+        const nombreApellido = req.body.nombre_apellido
+        const nacimiento = req.body.nacimiento
+        const cedula = req.body.cedula
+        const tipo = req.body.tipo
+        const expedicion = req.body.expedicion
+        await connection.query("UPDATE radiografias SET ? WHERE id = ?", [{
+                                                                        nombre_apellido: nombreApellido,
+                                                                        nacimiento: nacimiento,
+                                                                        cedula: cedula,
+                                                                        tipo: tipo,
+                                                                        expedicion: expedicion
+                                                                        }, id]
+        )
+        res.redirect("/mostrar")
+    } catch (error) {
+        console.error("No se ha realizado la query " + error)
+    }
 })
 
 router.get("/eliminar/:id", async (req, res) => {
-    const id = req.params.id
-    await connection.query("SELECT ruta FROM radiografias WHERE id=?", [id], (error, results) => {
-        if (error) {
-            console.error("No se ha realizado la query " + error)
-        } else {
-            try {
-                fs.unlinkSync(join(__dirname, "../public/uploads/", results[0].ruta))
-                connection.query("DELETE FROM radiografias WHERE id = ?", [id], (error, results) => {
-                    if (error) {
-                        console.error("No se ha realizado la query " + error)
-                    } else {
-                        res.redirect("/mostrar")
-                    }
-                })
-            } catch(error) {
-                console.error('No ha sido removido el archivo', error)
-            }
+    try {
+        const id = req.params.id
+        const [results] = await connection.query("SELECT ruta FROM radiografias WHERE id=?", [id])
+        try {
+            fs.unlinkSync(join(__dirname, "../public/uploads/", results[0].ruta))
+            await connection.query("DELETE FROM radiografias WHERE id = ?", [id])
+            res.redirect("/mostrar")
+        } catch(error) {
+            console.error('No ha sido removido el archivo', error)
         }
-    })
+    } catch (error) {
+        console.error("No se ha realizado la query " + error)
+    }
+    
+            
 })
 
 export default router
