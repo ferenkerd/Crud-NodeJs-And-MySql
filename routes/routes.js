@@ -35,8 +35,8 @@ const router = Router()
 
 router.get("/", (req, res) => res.render("index"))
 
-router.get("/mostrar", (req, res) => {
-    connection.query("SELECT * FROM radiografias", (error, results) => {
+router.get("/mostrar", async (req, res) => {
+    await connection.query("SELECT * FROM radiografias", (error, results) => {
         if (error) {
             console.error("No se ha realizado la query " + error)
             return
@@ -48,9 +48,9 @@ router.get("/mostrar", (req, res) => {
 
 router.get("/crear", (req, res) => res.render("create"))
 
-router.get("/actualizar/:id", (req, res) => {
+router.get("/actualizar/:id", async (req, res) => {
     const id = req.params.id
-    connection.query("SELECT * FROM radiografias WHERE id=?", [id], (error, results) => {
+    await connection.query("SELECT * FROM radiografias WHERE id=?", [id], (error, results) => {
         if (error) {
             console.error("No se ha realizado la query " + error)
             return
@@ -59,14 +59,14 @@ router.get("/actualizar/:id", (req, res) => {
     })
 })
 
-router.post("/guardar", uploadImage, (req, res) => {
+router.post("/guardar", uploadImage, async (req, res) => {
     const file = req.file.filename
     const nombreApellido = req.body.nombre_apellido
     const nacimiento = req.body.nacimiento
     const cedula = req.body.cedula
     const tipo = req.body.tipo
     const expedicion = req.body.expedicion
-    connection.query("INSERT INTO radiografias set ?", {
+    await connection.query("INSERT INTO radiografias set ?", {
         nombre_apellido: nombreApellido,
         nacimiento: nacimiento,
         cedula: cedula,
@@ -82,14 +82,14 @@ router.post("/guardar", uploadImage, (req, res) => {
     })
 })
 
-router.post("/editar", (req, res) => {
+router.post("/editar", async (req, res) => {
     const id = req.body.id
     const nombreApellido = req.body.nombre_apellido
     const nacimiento = req.body.nacimiento
     const cedula = req.body.cedula
     const tipo = req.body.tipo
     const expedicion = req.body.expedicion
-    connection.query("UPDATE radiografias SET ? WHERE id = ?", [{
+    await connection.query("UPDATE radiografias SET ? WHERE id = ?", [{
         nombre_apellido: nombreApellido,
         nacimiento: nacimiento,
         cedula: cedula,
@@ -105,15 +105,15 @@ router.post("/editar", (req, res) => {
     })
 })
 
-router.get("/eliminar/:id", (req, res) => {
+router.get("/eliminar/:id", async (req, res) => {
     const id = req.params.id
-    connection.query("SELECT ruta FROM radiografias WHERE id=?", [id], (error, results) => {
+    await connection.query("SELECT ruta FROM radiografias WHERE id=?", [id], (error, results) => {
         if (error) {
             console.error("No se ha realizado la query " + error)
         } else {
             try {
                 fs.unlinkSync(join(__dirname, "../public/uploads/", results[0].ruta))
-                connection.query("DELETE FROM radiografias WHERE id = ?", [id], (error, results) => {
+                await connection.query("DELETE FROM radiografias WHERE id = ?", [id], (error, results) => {
                     if (error) {
                         console.error("No se ha realizado la query " + error)
                     } else {
